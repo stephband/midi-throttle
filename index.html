@@ -1,0 +1,78 @@
+
+<h1>MIDI Throttle</h1>
+
+<p>Open the console to see tests</p>
+
+<script src="js/midi-throttle.js"></script>
+<script>
+
+console.group('Testing MIDIThrottle...');
+
+(function() {
+	var midiThrottle = MIDIThrottle();
+
+	var count = 0;
+
+	midiThrottle.out(function(e) {
+		count++;
+		console.assert(e.data[2] === 10,
+		              'Message should have value 10, has:', e.data[2]);
+	});
+
+	midiThrottle.in({data:[146,80,20]});
+	midiThrottle.in({data:[146,80,30]});
+	midiThrottle.in({data:[146,80,40]});
+	midiThrottle.in({data:[146,80,50]});
+	midiThrottle.in({data:[146,80,60]});
+	midiThrottle.in({data:[146,80,70]});
+	midiThrottle.in({data:[146,80,80]});
+	midiThrottle.in({data:[146,80,90]});
+	midiThrottle.in({data:[146,80,10]});
+
+	setTimeout(function() {
+		console.assert(count === 1, '1 message should be passed through. There were:', count);
+	}, 100);
+})();
+
+
+(function() {
+	var midiThrottle = MIDIThrottle();
+
+	navigator
+	.requestMIDIAccess()
+	.then(function(midi) {
+		console.log('MIDI access available');
+
+		midiThrottle.out(function(e) {
+			console.log('Throttled:', e.data);
+		});
+
+		midi.inputs().forEach(function(input) {
+			input.addEventListener('midimessage', midiThrottle.in);
+			input.onmidimessage = function(e) {
+				console.log(e.data);
+			};
+		});
+	}, function(error) {
+		console.log(error);
+	});
+})();
+
+console.log('...tests complete');
+console.groupEnd();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
