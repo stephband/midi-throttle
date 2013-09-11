@@ -1,6 +1,6 @@
-# midi-graph
+# midi-throttle
 
-A live graph of MIDI events for the browser.
+A MIDI node that throttles incoming events to the browser frame rate.
 
 <!--## Installation
 
