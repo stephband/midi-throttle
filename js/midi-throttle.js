@@ -77,11 +77,13 @@
 
 	// Functions
 
-	function sendAll(node, store) {
-		var key;
+	function sendAll(node, store, now) {
+		var key, message;
 
 		for (key in store) {
-			node.send(store[key]);
+			message = store[key];
+			message.timeThrottled = now;
+			node.send(message);
 		}
 
 		// Avoid garbage collection while sending - delete the store afterwards
@@ -97,7 +99,7 @@
 		var queued = false;
 
 		function trigger(now) {
-			sendAll(node, store);
+			sendAll(node, store, now);
 			queued = false;
 		}
 
@@ -120,7 +122,7 @@
 		window.MIDIThrottle = MIDIThrottle;
 	}
 	else {
-		module.name = 'midi-graph';
+		module.name = 'midi-throttle';
 		exports = MIDIThrottle;
 	}
 })();
